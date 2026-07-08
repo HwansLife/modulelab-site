@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MODULELAB — 시제품 제작 · RC부품 · 모빌리티</title>
+<style>
+/* ─── 토큰 ─── */
+:root {
+  --bg0:       #0f1117;
+  --bg1:       #161b27;
+  --bg2:       #1e2535;
+  --border:    #2a3347;
+  --border-strong: #3a4a66;
+  --text-primary: #e8ecf4;
+  --text-secondary: #8a97b0;
+  --text-muted: #5a6a88;
+  --accent:    #4f8ef7;
+  --accent-bg: rgba(79,142,247,0.10);
+  --accent-border: rgba(79,142,247,0.40);
+  --green:     #34c98a;
+  --green-bg:  rgba(52,201,138,0.10);
+  --warn-bg:   rgba(251,191,36,0.12);
+  --warn:      #fbbf24;
+  --on-accent: #ffffff;
+  --radius:    8px;
+  --font: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+}
+
+/* ─── 리셋 ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg0); color: var(--text-primary); font-family: var(--font); font-size: 14px; line-height: 1.6; }
+ul { list-style: none; }
+button { cursor: pointer; font-family: inherit; }
+
+/* ─── NAV ─── */
+.nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem; height: 56px;
+  background: var(--bg1);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 200;
+}
+.nav-logo { font-size: 15px; font-weight: 700; letter-spacing: 0.02em; }
+.nav-logo span { color: var(--accent); }
+.nav-menu { display: flex; height: 100%; }
+.nav-item { position: relative; height: 100%; display: flex; align-items: center; }
+.nav-item > .nav-label {
+  font-size: 13px; color: var(--text-secondary);
+  padding: 0 0.9rem; height: 100%;
+  display: flex; align-items: center; gap: 4px;
+  cursor: pointer; user-select: none; white-space: nowrap;
+  transition: color 0.15s, background 0.15s;
+}
+.nav-item > .nav-label:hover { color: var(--text-primary); background: var(--bg2); }
+.nav-item.active > .nav-label { color: var(--accent); font-weight: 600; }
+.chv { font-size: 11px; transition: transform 0.15s; display: inline-block; }
+.nav-item.open > .nav-label .chv { transform: rotate(180deg); }
+
+/* ─── DROPDOWN ─── */
+.dropdown {
+  display: none; position: absolute; top: 56px; left: 0;
+  min-width: 220px;
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-top: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  z-index: 300;
+}
+.nav-item.open .dropdown { display: block; }
+.dd-sec { padding: 0.4rem 0; }
+.dd-lbl {
+  font-size: 10px; font-weight: 600; color: var(--text-muted);
+  padding: 6px 1rem 3px; letter-spacing: 0.1em; text-transform: uppercase;
+}
+.dd-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 1rem; cursor: pointer;
+  transition: background 0.12s;
+}
+.dd-item:hover { background: var(--bg2); }
+.dd-icon {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: var(--bg2); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: var(--accent); flex-shrink: 0;
+}
+.dd-item.partner .dd-icon { color: var(--green); }
+.dd-text p { font-size: 13px; font-weight: 500; line-height: 1.3; }
+.dd-text span { font-size: 11px; color: var(--text-muted); }
+.dd-div { height: 1px; background: var(--border); margin: 0.2rem 0; }
+
+/* ─── NAV ACTIONS ─── */
+.nav-actions { display: flex; align-items: center; gap: 8px; }
+.btn-store {
+  font-size: 13px; font-weight: 500; padding: 6px 14px;
+  border-radius: var(--radius);
+  background: transparent; color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+  display: flex; align-items: center; gap: 6px;
+  transition: border-color 0.15s, color 0.15s;
+}
+.btn-store:hover { border-color: var(--accent); color: var(--accent); }
+.btn-cta {
+  font-size: 13px; font-weight: 600; padding: 6px 14px;
+  border-radius: var(--radius);
+  background: var(--accent); color: #fff; border: none;
+  transition: opacity 0.15s;
+}
+.btn-cta:hover { opacity: 0.88; }
+
+/* ─── HERO ─── */
+.hero {
+  padding: 5rem 2rem 4rem;
+  background: var(--bg0);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -120px; right: -80px;
+  width: 480px; height: 480px;
+  background: radial-gradient(circle, rgba(79,142,247,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; padding: 4px 12px;
+  border-radius: 100px;
+  background: var(--accent-bg); color: var(--accent);
+  border: 1px solid var(--accent-border);
+  margin-bottom: 1.25rem;
+  letter-spacing: 0.04em;
+}
+.hero h1 {
+  font-size: 36px; font-weight: 700; line-height: 1.25;
+  margin-bottom: 1rem; letter-spacing: -0.02em;
+}
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero-desc {
+  font-size: 15px; color: var(--text-secondary);
+  line-height: 1.75; max-width: 520px; margin-bottom: 2rem;
+}
+.hero-btns { display: flex; gap: 10px; }
+.btn-primary {
+  font-size: 14px; font-weight: 600; padding: 10px 24px;
+  border-radius: var(--radius);
+  background: var(--accent); color: #fff; border: none;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.88; }
+.btn-secondary {
+  font-size: 14px; padding: 10px 24px;
+  border-radius: var(--radius);
+  background: transparent; color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+  transition: border-color 0.15s;
+}
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ─── SECTIONS ─── */
+.sec { padding: 2.75rem 2rem; border-bottom: 1px solid var(--border); }
+.sec.bg1 { background: var(--bg1); }
+.sec.bg2 { background: var(--bg2); }
+.sec.bg0 { background: var(--bg0); }
+.sec-lbl {
+  font-size: 10px; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 1.25rem;
+}
+.sec h2 {
+  font-size: 20px; font-weight: 700; margin-bottom: 0.4rem;
+  letter-spacing: -0.01em;
+}
+.sec-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 1.5rem; }
+
+/* ─── BIZ CARDS ─── */
+.biz-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+.biz-card {
+  background: var(--bg0); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.4rem;
+  transition: border-color 0.15s;
+}
+.biz-card:hover { border-color: var(--border-strong); }
+.biz-card.feat {
+  border: 2px solid var(--accent-border);
+  background: var(--accent-bg);
+}
+.biz-card-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--bg1); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+.biz-card.feat .biz-card-icon { color: var(--accent); background: var(--accent-bg); border-color: var(--accent-border); }
+.biz-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 0.4rem; }
+.biz-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.65; }
+.bdg {
+  display: inline-block; margin-top: 0.75rem;
+  font-size: 10px; font-weight: 600; padding: 2px 9px;
+  border-radius: 100px;
+  background: var(--accent); color: #fff;
+  letter-spacing: 0.04em;
+}
+.bdg-soon { background: var(--warn-bg); color: var(--warn); }
+
+/* ─── SERVICE CARDS ─── */
+.legend { display: flex; gap: 18px; margin-bottom: 1.25rem; }
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-secondary); }
+.dot { width: 8px; height: 8px; border-radius: 50%; }
+.d-self   { background: var(--accent); }
+.d-partner { background: var(--green); }
+
+.svc-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+.svc-card {
+  background: var(--bg0); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1rem 1.1rem;
+  display: flex; align-items: flex-start; gap: 12px;
+  transition: border-color 0.15s;
+}
+.svc-card:hover { border-color: var(--border-strong); }
+.svc-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--bg1); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: var(--accent); flex-shrink: 0;
+}
+.svc-card.partner .svc-icon { color: var(--green); }
+.svc-body { flex: 1; }
+.svc-name { font-size: 13px; font-weight: 600; display: block; margin-bottom: 3px; }
+.svc-desc { font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 7px; }
+.stag {
+  display: inline-block; font-size: 10px; font-weight: 500;
+  padding: 2px 8px; border-radius: 100px;
+}
+.t-self { background: var(--accent-bg); color: var(--accent); }
+.t-partner { background: var(--green-bg); color: var(--green); }
+
+/* ─── PROCESS ─── */
+.proc-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; }
+.proc-step {
+  background: var(--bg0); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1rem 0.75rem; text-align: center;
+}
+.proc-num { font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 0.6rem; }
+.proc-icon { font-size: 22px; color: var(--text-secondary); display: block; margin-bottom: 0.5rem; }
+.proc-step b { font-size: 12px; font-weight: 600; display: block; margin-bottom: 3px; }
+.proc-step small { font-size: 10px; color: var(--text-muted); }
+
+/* ─── STATS ─── */
+.stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+.stat-card {
+  background: var(--bg1); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.25rem; text-align: center;
+}
+.stat-num { font-size: 28px; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; }
+.stat-lbl { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
+
+/* ─── PRODUCTS ─── */
+.prod-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.prod-card {
+  background: var(--bg0); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.prod-card:hover { border-color: var(--accent-border); transform: translateY(-2px); }
+.prod-thumb {
+  height: 100px; background: var(--bg2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+.prod-body { padding: 0.875rem 1rem; }
+.prod-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.prod-price { font-size: 14px; color: var(--accent); font-weight: 700; }
+.prod-compat { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+
+/* ─── MOBILITY ─── */
+.mob-inner {
+  background: var(--bg1); border: 1px solid var(--border);
+  border-radius: 14px; padding: 2.5rem 2rem; text-align: center;
+}
+.mob-icon { font-size: 36px; color: var(--text-muted); display: block; margin-bottom: 0.875rem; }
+.mob-inner h3 { font-size: 18px; font-weight: 700; margin-bottom: 0.5rem; }
+.mob-inner p { font-size: 13px; color: var(--text-secondary); margin-bottom: 1.25rem; }
+
+/* ─── CTA ─── */
+.cta-sec {
+  padding: 4rem 2rem; text-align: center;
+  background: var(--bg1); border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.cta-sec::before {
+  content: '';
+  position: absolute; bottom: -80px; left: 50%; transform: translateX(-50%);
+  width: 500px; height: 300px;
+  background: radial-gradient(ellipse, rgba(79,142,247,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-sec h2 { font-size: 24px; font-weight: 700; margin-bottom: 0.6rem; letter-spacing: -0.01em; }
+.cta-sec p { font-size: 14px; color: var(--text-secondary); margin-bottom: 1.75rem; }
+
+/* ─── FOOTER ─── */
+.footer {
+  padding: 1.5rem 2rem;
+  background: var(--bg1); border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-logo { font-size: 14px; font-weight: 700; }
+.footer-logo span { color: var(--accent); }
+.footer-links { display: flex; gap: 1.5rem; }
+.footer-links a {
+  font-size: 12px; color: var(--text-muted);
+  text-decoration: none; transition: color 0.15s;
+}
+.footer-links a:hover { color: var(--text-secondary); }
+.footer-copy { font-size: 11px; color: var(--text-muted); }
+
+/* ─── 반응형 ─── */
+@media (max-width: 768px) {
+  .nav-menu { display: none; }
+  .biz-grid, .svc-grid, .proc-grid, .stat-grid, .prod-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 26px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">MODULE<span>LAB</span></div>
+  <ul class="nav-menu">
+    <li class="nav-item active"><span class="nav-label">홈</span></li>
+    <li class="nav-item"><span class="nav-label">회사소개</span></li>
+    <li class="nav-item" id="np">
+      <span class="nav-label">시제품 제작 <span class="chv">▾</span></span>
+      <div class="dropdown">
+        <div class="dd-sec">
+          <div class="dd-lbl">3D 프린팅</div>
+          <div class="dd-item">
+            <div class="dd-icon">🖨</div>
+            <div class="dd-text"><p>FDM 출력</p><span>빠르고 경제적인 시제품</span></div>
+          </div>
+          <div class="dd-item">
+            <div class="dd-icon">💧</div>
+            <div class="dd-text"><p>SLA 출력 (레진)</p><span>고정밀 디테일 표현</span></div>
+          </div>
+        </div>
+        <div class="dd-div"></div>
+        <div class="dd-sec">
+          <div class="dd-lbl">가공 · 설계</div>
+          <div class="dd-item partner">
+            <div class="dd-icon" style="color:#34c98a">⚙️</div>
+            <div class="dd-text"><p>CNC 가공</p><span>협력사 연계</span></div>
+          </div>
+          <div class="dd-item">
+            <div class="dd-icon">📐</div>
+            <div class="dd-text"><p>설계 및 모델링</p><span>자체 제작</span></div>
+          </div>
+        </div>
+        <div class="dd-div"></div>
+        <div class="dd-sec">
+          <div class="dd-item">
+            <div class="dd-icon">🖼</div>
+            <div class="dd-text"><p>포트폴리오</p><span>제작 사례 보기</span></div>
+          </div>
+          <div class="dd-item">
+            <div class="dd-icon">✉️</div>
+            <div class="dd-text"><p>견적 문의</p><span>빠른 견적 신청</span></div>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="nav-item" id="nr">
+      <span class="nav-label">RC부품 <span class="chv">▾</span></span>
+      <div class="dropdown">
+        <div class="dd-sec">
+          <div class="dd-lbl">마운트 류</div>
+          <div class="dd-item"><div class="dd-icon">🧲</div><div class="dd-text"><p>자석 마운트</p><span>바디 탈착용</span></div></div>
+          <div class="dd-item"><div class="dd-icon">🔩</div><div class="dd-text"><p>서보 마운트</p><span>서보 고정 브래킷</span></div></div>
+          <div class="dd-item"><div class="dd-icon">🔋</div><div class="dd-text"><p>배터리 마운트</p><span>배터리 고정 트레이</span></div></div>
+          <div class="dd-item"><div class="dd-icon">⚡</div><div class="dd-text"><p>모터 마운트</p><span>모터 고정 플레이트</span></div></div>
+        </div>
+        <div class="dd-div"></div>
+        <div class="dd-sec">
+          <div class="dd-lbl">언더바디</div>
+          <div class="dd-item"><div class="dd-icon">🛡</div><div class="dd-text"><p>스키드</p><span>섀시 하단 보호</span></div></div>
+        </div>
+        <div class="dd-div"></div>
+        <div class="dd-sec">
+          <div class="dd-lbl">컨버전 키트</div>
+          <div class="dd-item"><div class="dd-icon">🔧</div><div class="dd-text"><p>전동 컨버전 킷</p><span>서보·배터리·모터 세트</span></div></div>
+        </div>
+        <div class="dd-div"></div>
+        <div class="dd-sec">
+          <div class="dd-item"><div class="dd-icon">🛒</div><div class="dd-text"><p>전체 상품</p><span>상품 목록 보기</span></div></div>
+        </div>
+      </div>
+    </li>
+    <li class="nav-item"><span class="nav-label">모빌리티</span></li>
+    <li class="nav-item"><span class="nav-label">고객센터</span></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn-store">🛍 스토어</button>
+    <button class="btn-cta">견적 문의</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">시제품 제작 · RC부품 · 모빌리티</div>
+  <h1>아이디어를 실물로,<br><em>시제품 제작</em>부터 양산까지</h1>
+  <p class="hero-desc">FDM·SLA 3D프린팅, CNC 가공, 설계·모델링을 원스톱으로 제공합니다.<br>아이디어 단계부터 완성까지 함께합니다.</p>
+  <div class="hero-btns">
+    <button class="btn-primary">제작 의뢰하기</button>
+    <button class="btn-secondary">포트폴리오 보기</button>
+  </div>
+</section>
+
+<!-- 사업 영역 -->
+<section class="sec bg1">
+  <div class="sec-lbl">사업 영역</div>
+  <div class="biz-grid">
+    <div class="biz-card feat">
+      <div class="biz-card-icon">🔧</div>
+      <h3>시제품 제작</h3>
+      <p>FDM·SLA 3D프린팅, CNC 가공, 설계·모델링 원스톱 서비스</p>
+      <span class="bdg">메인 서비스</span>
+    </div>
+    <div class="biz-card">
+      <div class="biz-card-icon">🚗</div>
+      <h3>RC부품</h3>
+      <p>자석 마운트, 전동 컨버전 킷, 스키드 등 자체 제작 RC 부품 판매</p>
+    </div>
+    <div class="biz-card">
+      <div class="biz-card-icon">🚀</div>
+      <h3>모빌리티</h3>
+      <p>모빌리티 분야 신규 사업 준비 중</p>
+      <span class="bdg bdg-soon">Coming soon</span>
+    </div>
+  </div>
+</section>
+
+<!-- 시제품 제작 서비스 -->
+<section class="sec bg0">
+  <h2>시제품 제작 서비스</h2>
+  <p class="sec-sub">목적과 예산에 맞는 최적의 공법을 제안해드립니다</p>
+  <div class="legend">
+    <div class="legend-item"><div class="dot d-self"></div>자체 제작</div>
+    <div class="legend-item"><div class="dot d-partner"></div>협력사 연계</div>
+  </div>
+  <div class="svc-grid">
+    <div class="svc-card">
+      <div class="svc-icon">🖨</div>
+      <div class="svc-body">
+        <span class="svc-name">FDM 출력</span>
+        <span class="svc-desc">빠르고 경제적인 시제품 제작</span>
+        <span class="stag t-self">자체 제작</span>
+      </div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">💧</div>
+      <div class="svc-body">
+        <span class="svc-name">SLA 출력 (레진)</span>
+        <span class="svc-desc">고정밀 디테일 표현에 최적</span>
+        <span class="stag t-self">자체 제작</span>
+      </div>
+    </div>
+    <div class="svc-card partner">
+      <div class="svc-icon" style="color:#34c98a">⚙️</div>
+      <div class="svc-body">
+        <span class="svc-name">CNC 가공</span>
+        <span class="svc-desc">금속·플라스틱 정밀 가공</span>
+        <span class="stag t-partner">협력사 연계</span>
+      </div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">📐</div>
+      <div class="svc-body">
+        <span class="svc-name">설계 및 모델링</span>
+        <span class="svc-desc">CAD 기구설계·역설계</span>
+        <span class="stag t-self">자체 제작</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 제작 프로세스 -->
+<section class="sec bg1">
+  <h2>제작 프로세스</h2>
+  <p class="sec-sub">문의부터 납품까지 체계적으로 진행합니다</p>
+  <div class="proc-grid">
+    <div class="proc-step">
+      <div class="proc-num">01</div>
+      <span class="proc-icon">✉️</span>
+      <b>문의 접수</b><small>온라인 견적 문의</small>
+    </div>
+    <div class="proc-step">
+      <div class="proc-num">02</div>
+      <span class="proc-icon">📄</span>
+      <b>도면 검토</b><small>CAD 파일 분석</small>
+    </div>
+    <div class="proc-step">
+      <div class="proc-num">03</div>
+      <span class="proc-icon">🔧</span>
+      <b>제작 진행</b><small>최적 공법 적용</small>
+    </div>
+    <div class="proc-step">
+      <div class="proc-num">04</div>
+      <span class="proc-icon">🔍</span>
+      <b>품질 검수</b><small>정밀 검사</small>
+    </div>
+    <div class="proc-step">
+      <div class="proc-num">05</div>
+      <span class="proc-icon">🚚</span>
+      <b>납품</b><small>안전 포장 배송</small>
+    </div>
+  </div>
+</section>
+
+<!-- 통계 -->
+<section class="sec bg2">
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-num">200+</div><div class="stat-lbl">누적 프로젝트</div></div>
+    <div class="stat-card"><div class="stat-num">100+</div><div class="stat-lbl">고객사</div></div>
+    <div class="stat-card"><div class="stat-num">48h</div><div class="stat-lbl">평균 견적 응답</div></div>
+    <div class="stat-card"><div class="stat-num">4종</div><div class="stat-lbl">제작 공법 보유</div></div>
+  </div>
+</section>
+
+<!-- RC부품 스토어 -->
+<section class="sec bg1">
+  <h2>RC부품 스토어</h2>
+  <p class="sec-sub">자체 제작 고품질 RC 부품을 직접 구매하세요</p>
+  <div class="prod-grid">
+    <div class="prod-card">
+      <div class="prod-thumb">🧲</div>
+      <div class="prod-body">
+        <div class="prod-name">자석 마운트 세트</div>
+        <div class="prod-price">₩12,000</div>
+        <div class="prod-compat">Traxxas TRX-4 호환</div>
+      </div>
+    </div>
+    <div class="prod-card">
+      <div class="prod-thumb">🔧</div>
+      <div class="prod-body">
+        <div class="prod-name">전동 컨버전 킷</div>
+        <div class="prod-price">₩35,000</div>
+        <div class="prod-compat">서보·배터리·모터 마운트 세트</div>
+      </div>
+    </div>
+    <div class="prod-card">
+      <div class="prod-thumb">🛡</div>
+      <div class="prod-body">
+        <div class="prod-name">스키드</div>
+        <div class="prod-price">₩8,000</div>
+        <div class="prod-compat">섀시 하단 보호</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 모빌리티 -->
+<section class="sec bg0">
+  <div class="mob-inner">
+    <span class="mob-icon">🚀</span>
+    <h3>모빌리티 사업부</h3>
+    <p>모빌리티 분야의 새로운 도전을 준비하고 있습니다.</p>
+    <span class="bdg bdg-soon">Coming soon</span>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sec">
+  <h2>지금 바로 시작해보세요</h2>
+  <p>아이디어가 있다면 무엇이든 가져오세요. 함께 실물로 만들어드립니다.</p>
+  <button class="btn-primary" style="font-size:15px; padding:12px 32px;">견적 문의하기</button>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">MODULE<span>LAB</span></div>
+  <div class="footer-links">
+    <a href="#">회사소개</a>
+    <a href="#">개인정보처리방침</a>
+    <a href="#">이용약관</a>
+  </div>
+  <div class="footer-copy">© 2025 MODULELAB. All rights reserved.</div>
+</footer>
+
+<script>
+// 드롭다운 토글
+document.querySelectorAll('.nav-item').forEach(function(item) {
+  var label = item.querySelector('.nav-label');
+  if (!label) return;
+  label.addEventListener('click', function(e) {
+    e.stopPropagation();
+    var isOpen = item.classList.contains('open');
+    document.querySelectorAll('.nav-item').forEach(function(i) { i.classList.remove('open'); });
+    if (!isOpen && item.querySelector('.dropdown')) {
+      item.classList.add('open');
+    }
+  });
+});
+document.addEventListener('click', function() {
+  document.querySelectorAll('.nav-item').forEach(function(i) { i.classList.remove('open'); });
+});
+</script>
+</body>
+</html>
